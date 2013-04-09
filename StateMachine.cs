@@ -56,7 +56,7 @@ public class StateMachine {
     }
 
     public void Step(){
-        if(context.attrs.debug) Debug.Log("Step: " + step++);
+        if(context.debug) Debug.Log("Step: " + step++);
         if( globalState != null){
             globalState.Execute(context);
         }
@@ -68,7 +68,7 @@ public class StateMachine {
     }
 
     public void ChangeState( State nextState ){
-        if(context.attrs.debug)  Debug.Log("ChangeState: " + nextState.name );
+        if(context.debug)  Debug.Log("ChangeState: " + nextState.name );
         currentState.Exit(context);
         currentState = nextState;
         currentState.Enter(context);
