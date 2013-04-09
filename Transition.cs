@@ -16,10 +16,9 @@ public class Transition {
 
 	public State Execute(Context context) {
 		foreach( Condition condition in conditions){
-			bool passed = condition.Execute(context);
+			bool result = condition.Execute(context);
 			//Debug.Log( condition.GetType().Name);
-			passed = inverse ? passed : !passed;
-			if( !passed ) return null;
+			if( result != condition.target ) return null;
 		}
 		return target;
 	}
