@@ -27,7 +27,7 @@ public class State {
 	public State Execute(Context context){
 		if( step != null ) step.Execute(context);
 		State next = ExecuteTransitions(context);
-		Debug.Log("State>Execute : " + (next != null ? next.name : "null") );
+		if(context.attrs.debug)  Debug.Log("State>Execute : " + (next != null ? next.name : "null") );
 		return next;
 	}
 
@@ -35,12 +35,27 @@ public class State {
 		if(	exit != null) exit.Execute(context);
 	}
 
-	public void SetStepAction( Action action ){
-		step = action;
+	public void SetAction( Action action, string mode){
+		switch(mode){
+			case "step":
+				step = action;
+				break;
+			case "enter":
+				enter = action;
+				break;
+			case "exit":
+				exit = action;
+				break;
+		}
 	}
 
-	public void AddTransition( State target, Condition condition, bool inverse){
-		transitions.Add( target.GetType().Name, new Transition( target, condition, inverse) );
+	public void AddTransition( State target, Condition[] conditions, bool inverse){
+		Transition transition = new Transition( target, conditions, inverse);
+		string key = target.name;
+		while( this.transitions.ContainsKey( key )){
+			key += '_';
+		};
+		this.transitions.Add( key , transition );
 	}
 
 	public State ExecuteTransitions(Context context){

@@ -5,22 +5,23 @@ public class Transition {
 
 
 	State target;	
-	Condition condition;
+	Condition[] conditions;
 	bool inverse;
 
-	public Transition( State target, Condition condition, bool inverse ) {
+	public Transition( State target, Condition[] conditions, bool inverse ) {
 		this.inverse = inverse;
 		this.target = target;
-		this.condition = condition;
+		this.conditions = conditions;
 	}
 
 	public State Execute(Context context) {
-		bool result = condition.Execute(context);
-		result = inverse ? result : !result;
-		if( result ){
-			return target;
+		foreach( Condition condition in conditions){
+			bool passed = condition.Execute(context);
+			//Debug.Log( condition.GetType().Name);
+			passed = inverse ? passed : !passed;
+			if( !passed ) return null;
 		}
-		return null;
+		return target;
 	}
 	
 }

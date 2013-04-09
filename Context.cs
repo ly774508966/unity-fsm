@@ -3,5 +3,5 @@ using UnityEngine;
 
 public class Context {
 	public GameObject owner;
-	public Attributes attributes;
+	public Attributes attrs;
 }
