@@ -31,20 +31,28 @@ public class StateMachine {
 
 
     public void AddTransition( string origin, string target, Condition condition){
-        states[origin].AddTransition( states[target], new Condition[]{ condition }, true );
-    }
-
-    public void AddTransition( string origin, string target, Condition condition, bool inverse){
-        states[origin].AddTransition( states[target], new Condition[]{ condition }, inverse );
+        _addTransition( origin, target, new Condition[]{ condition } );
     }
 
     // add transition with multiple conditions
     public void AddTransition( string origin, string target, Condition[] conditions ){
-        states[origin].AddTransition( states[target], conditions , true );
+        _addTransition( origin, target, conditions );
+    }
+
+    public void AddGlobalTransition( string origin, string target, Condition condition ) {
+
     }
 
     public void SetCurrentState( string name ) {
         currentState = states[name];
+    }
+
+    public void SetCurrentGlobal( string name ){
+        globalState = states[name];
+    }
+
+    void _addTransition( string origin, string target, Condition[] conditions ){
+        states[origin].AddTransition( states[target], conditions, true );
     }
 
     public void SetAction( string state, Action action){
@@ -55,20 +63,26 @@ public class StateMachine {
         states[state].SetAction(action, mode);
     }
 
+    public void While( string state, Action action){
+        states[state].SetAction(action, "step");
+    }
+
+    public void OnEnter( string state, Action action){
+        states[state].SetAction(action, "enter");
+    }
+
     public void Step(){
-        if(context.debug) Debug.Log("Step: " + step++);
-        if( globalState != null){
-            globalState.Execute(context);
-        }
         if( currentState != null){
             State next = currentState.Execute(context);
             if(next != null) ChangeState( next );
-            //Debug.Log(currentState.name);
+        }
+        if( globalState != null){
+            State next = globalState.Execute(context);
+            if(next != null) ChangeState( next );
         }
     }
 
     public void ChangeState( State nextState ){
-        if(context.debug)  Debug.Log("ChangeState: " + nextState.name );
         currentState.Exit(context);
         currentState = nextState;
         currentState.Enter(context);

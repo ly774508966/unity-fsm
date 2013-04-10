@@ -27,7 +27,6 @@ public class State {
 	public State Execute(Context context){
 		if( step != null ) step.Execute(context);
 		State next = ExecuteTransitions(context);
-		if(context.debug)  Debug.Log("State>Execute : " + (next != null ? next.name : "null") );
 		return next;
 	}
 

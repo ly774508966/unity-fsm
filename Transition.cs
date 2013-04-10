@@ -6,10 +6,8 @@ public class Transition {
 
 	State target;	
 	Condition[] conditions;
-	bool inverse;
 
 	public Transition( State target, Condition[] conditions, bool inverse ) {
-		this.inverse = inverse;
 		this.target = target;
 		this.conditions = conditions;
 	}
