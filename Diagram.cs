@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateMachine {
+public class Diagram {
 
 //  const's
     const uint MaxStateQty = 10;
@@ -11,7 +11,7 @@ public class StateMachine {
 
 //  instance var's
     uint nextFreeSlot;
-    Dictionary<string, State> states = new Dictionary<string, State>();
+    private Dictionary<string, State> states = new Dictionary<string, State>();
     State currentState;
     State previousState;
     State globalState;
@@ -19,14 +19,24 @@ public class StateMachine {
     int step;
 
 //  ctor's
-    public StateMachine ( Context context ) {
-        this.context = context ;
-    }
 
     public void AddStates( string[] states ){
         foreach( string name in states ){
-            this.states.Add( name, new State(name) );
+            AddState(name);
         }
+    }
+
+    public void SetContext(Context context){
+        this.context = context;
+    }
+
+    private void AddState( string name ){
+        this.states.Add( name, new State(name) );
+        var i = 0;
+        foreach( var state in this.states){
+            i++;
+        };
+        if( i == 0) SetCurrentState(name);
     }
 
 
@@ -69,6 +79,10 @@ public class StateMachine {
 
     public void OnEnter( string state, Action action){
         states[state].SetAction(action, "enter");
+    }
+
+    public void OnExit( string state, Action action){
+        states[state].SetAction(action, "exit");
     }
 
     public void Step(){
