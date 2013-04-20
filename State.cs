@@ -5,10 +5,9 @@ using UnityEngine;
 public class State {
 
 	public string name;
-	Action enter;
-	Action step;
-	Action exit;
-
+	Dictionary< string, Action> enter = new Dictionary< string, Action >();
+	Dictionary< string, Action> step = new Dictionary< string, Action >();
+	Dictionary< string, Action> exit = new Dictionary< string, Action >();
 	Dictionary< string, Transition> transitions = new Dictionary< string, Transition >();
 
 	public State(){
@@ -21,29 +20,40 @@ public class State {
 
 
 	public void Enter(Context context){
-		if( enter != null) enter.Execute(context);
+		if( enter != null) ExecuteActions(context, enter);
+	}
+
+	public void Step(Context context){
+		if( enter != null) ExecuteActions(context, step);
+	}
+
+	public void Exit(Context context){
+		if( enter != null) ExecuteActions(context, exit);
 	}
 
 	public State Execute(Context context){
-		if( step != null ) step.Execute(context);
+		if( step != null ) Step(context);
 		State next = ExecuteTransitions(context);
 		return next;
 	}
 
-	public void Exit(Context context){
-		if(	exit != null) exit.Execute(context);
+	private void ExecuteActions(Context context, Dictionary< string, Action> actions){
+		foreach( KeyValuePair<string, Action> action in actions)
+		{
+			action.Value.Execute(context);
+		}
 	}
 
 	public void SetAction( Action action, string mode){
 		switch(mode){
 			case "step":
-				step = action;
+				step.Add( action.GetType().Name, action);
 				break;
 			case "enter":
-				enter = action;
+				enter.Add( action.GetType().Name, action);
 				break;
 			case "exit":
-				exit = action;
+				exit.Add( action.GetType().Name, action);
 				break;
 		}
 	}
