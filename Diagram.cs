@@ -86,12 +86,12 @@ public class Diagram {
     }
 
     public void Step(){
-        if( currentState != null){
-            State next = currentState.Execute(context);
-            if(next != null) ChangeState( next );
-        }
         if( globalState != null){
             State next = globalState.Execute(context);
+            if(next != null) ChangeState( next );
+        }
+        if( currentState != null){
+            State next = currentState.Execute(context);
             if(next != null) ChangeState( next );
         }
     }
