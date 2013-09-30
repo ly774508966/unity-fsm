@@ -6,103 +6,153 @@ public class Diagram {
 
 //  const's
     const uint MaxStateQty = 10;
-    Context context;
 
 
 //  instance var's
-    uint nextFreeSlot;
+    private Context _context;
+    private uint nextFreeSlot;
     private Dictionary<string, State> states = new Dictionary<string, State>();
-    State currentState;
-    State previousState;
-    State globalState;
+    private State currentState;
+    private State previousState;
+    private State globalState;
+    private int step;
 
-    int step;
+// getters
+    public Context context {
+        get { return _context; }
+    }
 
-//  ctor's
+// manage _context
+    public void SetContext(Context _context)
+    {
+        _context.diagram = this;
+        this._context = _context;
+    }
 
-    public void AddStates( string[] states ){
-        foreach( string name in states ){
-            AddState(name);
+//  manage states
+    public void AddStates( string name)
+    {
+        _addState(name);
+    }
+
+    public void AddStates( string[] states )
+    {
+        foreach( string name in states )
+        {
+            _addState(name);
         }
     }
 
-    public void SetContext(Context context){
-        this.context = context;
-    }
-
-    private void AddState( string name ){
-        this.states.Add( name, new State(name) );
-        var i = 0;
-        foreach( var state in this.states){
-            i++;
-        };
-        if( i == 0) SetCurrentState(name);
-    }
-
-
-    public void AddTransition( string origin, string target, Condition condition){
-        _addTransition( origin, target, new Condition[]{ condition } );
-    }
-
-    // add transition with multiple conditions
-    public void AddTransition( string origin, string target, Condition[] conditions ){
-        _addTransition( origin, target, conditions );
-    }
-
-    public void AddGlobalTransition( string origin, string target, Condition condition ) {
-
-    }
-
-    public void SetCurrentState( string name ) {
+    public void SetCurrentState( string name )
+    {
         currentState = states[name];
     }
 
-    public void SetCurrentGlobal( string name ){
+    // Set the global state, which will respond to conditions independent of the current local state
+    public void SetCurrentGlobal( string name )
+    {
         globalState = states[name];
     }
 
-    void _addTransition( string origin, string target, Condition[] conditions ){
-        states[origin].AddTransition( states[target], conditions, true );
+    public string GetCurrent()
+    {
+        return currentState.name;
     }
 
-    public void SetAction( string state, Action action){
+    public void ChangeState( State nextState )
+    {
+        currentState.Exit(_context);
+        currentState = nextState;
+        currentState.Enter(_context);
+    }
+
+// manage transitions
+    public void AddTransition( string origin, string target, Condition condition)
+    {
+        _addTransition( origin, target, new Condition[]{ condition } );
+    }
+
+    public void AddTransition( string origin, string target, Condition[] conditions )
+    {
+        _addTransition( origin, target, conditions );
+    }
+
+    public void AddGlobalTransition( string origin, string target, Condition condition ) 
+    {
+
+    }
+
+    public void While( string state, Action action)
+    {
         states[state].SetAction(action, "step");
     }
 
-    public void SetAction( string state, string mode, Action action ){
-        states[state].SetAction(action, mode);
-    }
-
-    public void While( string state, Action action){
-        states[state].SetAction(action, "step");
-    }
-
-    public void OnEnter( string state, Action action){
+    public void OnEnter( string state, Action action)
+    {
         states[state].SetAction(action, "enter");
     }
 
-    public void OnExit( string state, Action action){
+    public void OnExit( string state, Action action)
+    {
         states[state].SetAction(action, "exit");
     }
 
-    public void Step(){
-        if( globalState != null){
-            State next = globalState.Execute(context);
+    public void OnFinish( string state, Action action)
+    {
+        states[state].SetAction(action, "finish");
+    }
+
+// manage actions
+    public void SetAction( string state, Action action)
+    {
+        states[state].SetAction(action, "step");
+    }
+
+    public void SetAction( string state, string mode, Action action )
+    {
+        states[state].SetAction(action, mode);
+    }
+
+// flow methods
+    public void Step()
+    {
+        if( globalState != null)
+        {
+            State next = globalState.Execute(_context);
             if(next != null) ChangeState( next );
         }
-        if( currentState != null){
-            State next = currentState.Execute(context);
+        if( currentState != null)
+        {
+            State next = currentState.Execute(_context);
             if(next != null) ChangeState( next );
         }
     }
 
-    public void ChangeState( State nextState ){
-        currentState.Exit(context);
-        currentState = nextState;
-        currentState.Enter(context);
+// getters
+    public State GetState(string name)
+    {
+        return states[name];
     }
 
-    public string GetCurrent(){
-        return currentState.name;
+    public int GetSize()
+    {
+        return states.Count;
+    }
+
+    public object[] GetConditions(string origin, string target)
+    {
+        return new object[]{ new object()};
+    }
+
+// private methods
+    private void _addState( string name )
+    {
+        this.states.Add( name, new State(name) );
+        var length = this.states.Count;
+        if( length == 1) SetCurrentState(name);
+    }
+    private void _addTransition( string origin, string target, Condition[] conditions )
+    {
+        states[origin].AddTransition( states[target], conditions, true );
     }
 }

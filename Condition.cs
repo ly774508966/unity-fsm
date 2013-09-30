@@ -2,27 +2,34 @@ using System;
 using UnityEngine;
 using System.Reflection;
 
-public abstract class Condition {
-	public bool target;
+public class Condition {
+	public bool normal = true;
 	public FieldInfo info;
 	public float floatVariable;
 	public Condition(){
-		this.target = true;
+		this.normal = true;
 	}
-	public Condition( bool target ){
-		this.target = target ;
-	}
+	public Condition Invert()
+	{
+		// this is called to invert the desired condition
 
-	public Condition( float variable){
-		this.floatVariable = variable;
+		this.normal =  false;
+		return this;
 	}
+	public Condition SetFloat(float _floatVariable)
+	{
+		// this is called to set a float variable used for
+		// the condition check.
 
-	public Condition( string fieldName, bool target, Context context){
-		this.target = target;
-		info = context.GetType().GetField(fieldName);
+		this.floatVariable = _floatVariable; 
+		return this;
 	}
-
-	public abstract bool Execute(Context context);
+	public Condition SetInfo( string fieldName, Context context)
+	{
+		this.info = context.GetType().GetField(fieldName);
+		return this;
+	}
+	public virtual bool Execute(Context context){ return true; }
 	public bool Exist( Context[] fields ){
 		foreach( Context field in fields ){
 			if( field == null ) return false;

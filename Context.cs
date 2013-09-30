@@ -6,6 +6,7 @@ public class Context : MonoBehaviour {
 	public bool paused;
 	public bool alive = true;
 	public GameObject owner;
+	public Diagram diagram;
 
 	void Awake(){
 		owner = gameObject;
