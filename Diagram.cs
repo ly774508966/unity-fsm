@@ -67,6 +67,10 @@ public class Diagram {
     }
 
 // manage transitions
+    public void AddTransition( string origin, string target)
+    {
+        _addTransitionTest( origin, target);
+    }
     public void AddTransition( string origin, string target, Condition condition)
     {
         _addTransition( origin, target, new Condition[]{ condition } );
@@ -154,5 +158,9 @@ public class Diagram {
     private void _addTransition( string origin, string target, Condition[] conditions )
     {
         states[origin].AddTransition( states[target], conditions, true );
+    }
+    private void _addTransitionTest( string origin, string target)
+    {
+        
     }
 }
