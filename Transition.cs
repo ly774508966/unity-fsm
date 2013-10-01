@@ -1,36 +1,46 @@
 using System.Collections;
+using System;
 using UnityEngine;
 
 public class Transition
 {
 	public State target;	
-	public Condition[] conditions;
+	public delegate bool CheckCondition();
+	public CheckCondition conditions;
 
-	public Transition( State target, Condition[] conditions)
+	public Transition ( State target)
 	{
 		this.target = target;
-		this.conditions = conditions;
 	}
 
-	public State Execute(Context context)
+	public State Execute()
 	{
-		foreach( Condition condition in conditions)
+		if( conditions != null) 
 		{
-			bool result = condition.Execute(context);
-			if( result != condition.normal ) return null;
+			foreach( CheckCondition condition in conditions.GetInvocationList() )
+			{
+				bool result = condition();
+				if( result == false ) return null;
+			}
+
+			return target;
 		}
-		return target;
+		else 
+		{
+			return null;
+		}
 	}
 
-	public void AddCondition( Condition condition)
+	public Transition Equals( string fieldName, bool second)
 	{
-		Condition[] current = conditions;	
-		conditions = new Condition[conditions.Length + 1];
-		for (int i = 0; i < current.Length; i++)
-		{
-			conditions[i] = current[i];
-		}
-		conditions[conditions.Length-1] = condition;
+		Condition condition = new Condition().Equals(fieldName, second);
+
+		return this;
+	}
+
+	public Transition Equals( ref int first, int second)
+	{
+		return this;
 	}
 	
 }

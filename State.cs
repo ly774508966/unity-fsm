@@ -109,15 +109,16 @@ public class State {
 		return transitions; 
 	}
 
-	public void AddTransition( State target, Condition[] conditions, bool inverse)
+	public Transition AddTransition( State target) 
 	{
-		Transition transition = new Transition( target, conditions);
+		Transition transition = new Transition( target );
 		string key = target.name;
 		while( this.transitions.ContainsKey( key ))
 		{
 			key += '_';
 		};
-		this.transitions.Add( key , transition );
+		this.transitions.Add( key, transition);
+		return transition;
 	}
 
 	public State ExecuteTransitions(Context context)
@@ -125,7 +126,7 @@ public class State {
 		foreach( KeyValuePair<string, object> _transition in transitions)
 		{
 			Transition transition = (Transition) _transition.Value;
-			State next = transition.Execute(context);
+			State next = transition.Execute();
 			if( next != null ) return next;
 		}
 		return null;

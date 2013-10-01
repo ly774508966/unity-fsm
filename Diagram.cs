@@ -15,7 +15,7 @@ public class Diagram {
     private State currentState;
     private State previousState;
     private State globalState;
-    private int step;
+    public int step;
 
 // getters
     public Context context {
@@ -67,18 +67,9 @@ public class Diagram {
     }
 
 // manage transitions
-    public void AddTransition( string origin, string target)
+    public Transition AddTransition( string origin, string target)
     {
-        _addTransitionTest( origin, target);
-    }
-    public void AddTransition( string origin, string target, Condition condition)
-    {
-        _addTransition( origin, target, new Condition[]{ condition } );
-    }
-
-    public void AddTransition( string origin, string target, Condition[] conditions )
-    {
-        _addTransition( origin, target, conditions );
+        return _addTransition( origin, target);
     }
 
     public void AddGlobalTransition( string origin, string target, Condition condition ) 
@@ -130,7 +121,9 @@ public class Diagram {
             State next = currentState.Execute(_context);
             if(next != null) ChangeState( next );
         }
+        step++;
     }
+
 
 // getters
     public State GetState(string name)
@@ -155,12 +148,8 @@ public class Diagram {
         var length = this.states.Count;
         if( length == 1) SetCurrentState(name);
     }
-    private void _addTransition( string origin, string target, Condition[] conditions )
+    private Transition _addTransition( string origin, string target)
     {
-        states[origin].AddTransition( states[target], conditions, true );
-    }
-    private void _addTransitionTest( string origin, string target)
-    {
-        
+        return states[origin].AddTransition( states[target] );
     }
 }

@@ -5,10 +5,18 @@ using System.Reflection;
 public class Condition {
 	public bool normal = true;
 	public FieldInfo info;
+	public FieldInfo bool1;
 	public float floatVariable;
+	public delegate bool Check();
+	public Check check;
+	private Context context;
+
+	private bool bool2;
+
 	public Condition(){
 		this.normal = true;
 	}
+
 	public Condition Invert()
 	{
 		// this is called to invert the desired condition
@@ -35,5 +43,18 @@ public class Condition {
 			if( field == null ) return false;
 		}
 		return true;
+	}
+
+	public Condition Equals( string fieldName, bool second)
+	{
+		this.bool1= context.GetType().GetField(fieldName);
+		this.bool2 = second;
+		check = this.CheckEquals;
+		return this;
+	}
+
+	private bool CheckEquals()
+	{
+		return (bool)bool1.GetValue(context) == bool2;
 	}
 }
