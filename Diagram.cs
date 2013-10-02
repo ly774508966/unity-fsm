@@ -16,6 +16,7 @@ public class Diagram {
     private State previousState;
     private State globalState;
     public int step;
+    public float deltaTime;
 
 // getters
     public Context context {
@@ -91,6 +92,12 @@ public class Diagram {
             if(next != null) ChangeState( next );
         }
         step++;
+    }
+
+    public void TestStep()
+    {
+        deltaTime = .01f;
+        Step();
     }
 
 
