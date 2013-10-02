@@ -30,17 +30,4 @@ public class Transition
 			return null;
 		}
 	}
-
-	public Transition Equals( string fieldName, bool second)
-	{
-		Condition condition = new Condition().Equals(fieldName, second);
-
-		return this;
-	}
-
-	public Transition Equals( ref int first, int second)
-	{
-		return this;
-	}
-	
 }

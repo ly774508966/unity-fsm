@@ -72,7 +72,7 @@ public class Diagram {
         return _addTransition( origin, target);
     }
 
-    public void AddGlobalTransition( string origin, string target, Condition condition ) 
+    public void AddGlobalTransition( string origin, string target) 
     {
 
     }
