@@ -77,37 +77,6 @@ public class Diagram {
 
     }
 
-    public void While( string state, Action action)
-    {
-        states[state].SetAction(action, "step");
-    }
-
-    public void OnEnter( string state, Action action)
-    {
-        states[state].SetAction(action, "enter");
-    }
-
-    public void OnExit( string state, Action action)
-    {
-        states[state].SetAction(action, "exit");
-    }
-
-    public void OnFinish( string state, Action action)
-    {
-        states[state].SetAction(action, "finish");
-    }
-
-// manage actions
-    public void SetAction( string state, Action action)
-    {
-        states[state].SetAction(action, "step");
-    }
-
-    public void SetAction( string state, string mode, Action action )
-    {
-        states[state].SetAction(action, mode);
-    }
-
 // flow methods
     public void Step()
     {
