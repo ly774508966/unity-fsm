@@ -47,6 +47,7 @@ public class Diagram {
     public void SetCurrentState( string name )
     {
         currentState = states[name];
+        currentState.Enter(_context);
     }
 
     // Set the global state, which will respond to conditions independent of the current local state
@@ -58,6 +59,16 @@ public class Diagram {
     public string GetCurrent()
     {
         return currentState.name;
+    }
+	
+	public State GetCurrentState()
+	{
+		return currentState;	
+	}
+
+    public string GetCurrentGlobal()
+    {
+        return globalState.name;
     }
 
     public void ChangeState( State nextState )
@@ -81,17 +92,20 @@ public class Diagram {
 // flow methods
     public void Step()
     {
+        step++;
         if( globalState != null)
         {
             State next = globalState.Execute(_context);
-            if(next != null) ChangeState( next );
+            if(next != null) {
+               ChangeState( next);
+               return;
+            }
         }
         if( currentState != null)
         {
             State next = currentState.Execute(_context);
             if(next != null) ChangeState( next );
         }
-        step++;
     }
 
     public void TestStep()
@@ -99,6 +113,12 @@ public class Diagram {
         deltaTime = .01f;
         Step();
     }
+	
+	public void TestStep(float duration)
+	{
+		deltaTime = duration;
+		Step ();
+	}
 
 
 // getters
